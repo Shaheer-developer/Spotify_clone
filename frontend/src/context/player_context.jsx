@@ -59,6 +59,9 @@ const PlayerContextProvider = (props) => {
     useEffect(() => {
         setTimeout(() => {
             audioRef.current.ontimeupdate = () => {
+                if(!audioRef.current.duration || isNaN(audioRef.current.duration)){
+                    return ;
+                }
                 seekbar.current.style.width = (Math.floor(audioRef.current.currentTime/audioRef.current.duration*100))+"%";
                 settime({
                     currentTime: {
