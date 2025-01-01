@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const DBNAME = "spotify_clone";
+const DBNAME = "Spotify_clone";
 const connectdb = async () => {
     try {
         const connectionInstance = await mongoose.connect (`${process.env.MONGODB_URI}/${DBNAME}`)
@@ -9,7 +9,6 @@ const connectdb = async () => {
     } catch (error) {
         console.log (`Error: ${error.message}`)
         process.exit(1)
-
     }
 }
 
