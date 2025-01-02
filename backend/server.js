@@ -14,8 +14,10 @@ app.use(cors());
 
 //initializing routes
 import { songRouter } from './src/routes/song.route.js';
+import { albumRouter } from './src/routes/album.route.js';
 
 app.use('/api/v1/songs', songRouter)
+app.use('/api/v1/album', albumRouter)
 
 
 connectdb()

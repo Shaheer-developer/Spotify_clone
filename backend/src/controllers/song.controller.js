@@ -2,6 +2,7 @@ import { Apiresponse } from '../utils/Apiresponse.js'
 import { Apierrors } from '../utils/Apierror.js'
 import uploadOncloudinary from '../config/cloudinary.js'
 import { Song } from '../models/song.model.js'
+import { isValidObjectId } from 'mongoose'
 
 
 const addSong = async (req, res) => {
@@ -44,25 +45,49 @@ const addSong = async (req, res) => {
             duration: `${Math.floor(uploadAudio.duration/60)}:${Math.floor(uploadAudio.duration%60)}`,
         })
 
-        const createdSong = await Song.findById(song._id)
-
-        if (!createdSong) {
+        if (!song) {
             throw new Apierrors(400, "Error while uploading song")
         }
 
         return res.status(200).json(
-            new Apiresponse(200, createdSong, "Song uploaded successfully")
+            new Apiresponse(200, song, "Song uploaded successfully")
         )
     }
     catch (error) {
-        console.log(error)
-        return error;
+        throw new Apierrors(500 , "Song upload failed")
     }
-
 }
 
 const listSongs = async (req, res) => {
-
+ try {
+       const allsongs = await Song.find({})
+       if(!allsongs){
+           throw new Apierrors(404 , "Error while fetching songs")
+       }
+       return res.status(200).json(
+           new Apiresponse(200 , allsongs , "All songs fetched successfully")
+       )
+ } catch (error) {
+    throw new Apierrors(500 , "Server error")
+ }
 }
 
-export { addSong, listSongs }
+const removeSong = async (req, res) => {
+   try {
+      const { id } = req.body
+      if(!isValidObjectId(id)){
+        throw new Apierrors(400 , "Song Id is not valid")
+      }
+     const songremoved = await Song.findByIdAndDelete(id)
+     if(!songremoved){
+         throw new Apierrors(400 , "Error while removing song")
+     }
+     return res.status(200).json(
+         new Apiresponse(200 , {} , "Song removed successfully")
+     )
+   } 
+   catch (error) {
+    throw new Apierrors(500 , "Server error")
+   }
+}
+export { addSong, listSongs , removeSong}
