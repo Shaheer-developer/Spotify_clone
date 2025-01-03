@@ -6,6 +6,7 @@ import Addsong from "./pages/Addsong";
 import Addalbum from "./pages/addalbum";
 import Listsong from "./pages/Listsong";
 import Sidebar from "./components/Sidebar";
+import Navbar from "./components/Navbar";
 
 const App = () => {
     return (
@@ -15,7 +16,7 @@ const App = () => {
             <Sidebar/>
 
             <div className="flex-1 h-screen overflow-y-scroll bg-[#F3FFF7]">
-           
+           <Navbar/>
                 <div className="pt-8 pl-5 sm:pt-12 sm:pl-12">
                     <Routes>
                         <Route path='/add-song' element={<Addsong />} />
