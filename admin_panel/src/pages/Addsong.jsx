@@ -1,45 +1,84 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/admin-assets/assets'
+import axios from 'axios'
+import { API_ENDPOINTS } from '../config/api'
+import { toast } from 'react-toastify'
 
 const Addsong = () => {
   const [image, setimage] = useState(false)
   const [song, setsong] = useState(false)
-  const [name, setname] = useState(false)
-  const [desc, setdesc] = useState(false)
+  const [name, setname] = useState("")
+  const [desc, setdesc] = useState("")
   const [album, setalbum] = useState(false)
   const [loading, setloading] = useState(false)
-  const [albumData, setalbumData] = useState(false)
+  const [albumData, setalbumData] = useState([])
 
-  return (
-    <form className='flex flex-col items-start gap-8 text-gray-600'>
+  const onSubmitHandler = async (e) => {
+    e.preventDefault();
+    setloading(true)
+    try {
+      const formData = new FormData();
+
+      formData.append('name', name)
+      formData.append("desc" , desc)
+      formData.append('image' , image)
+      formData.append("audio" , song)
+      formData.append('album' , albumData)
+
+      const response = await axios.post(API_ENDPOINTS.addsong , formData)
+
+      if(response.data.success){
+        toast.success("Song added")
+        setname("")
+        setdesc("")
+        setalbum("none")
+        setimage(false)
+        setsong(false)
+      }
+    else{
+      toast.error("Something went wrong")
+    }
+    } catch (error) {
+     toast.error("Error occured") 
+    }
+setloading(false)
+  }
+  return loading ? (
+    <div className='grid place-items-center min-h-[80vh]'>
+      <div className='w-16 h-16 place-self-center border-4 border-gray-400 border-t-gray-800 rounded-full animate-spin'>
+      </div>
+
+    </div>
+  ): (
+    <form onSubmit={onSubmitHandler} className='flex flex-col items-start gap-8 text-gray-600'>
       <div className='flex gap-8'>
         <div className='flex flex-col gap-4'>
           <p>Upload song</p>
-          <input type="file" id='song' accept='audio/*' hidden />
+          <input onChange={(e)=>setsong(e.target.files[0])} type="file" id='song' accept='audio/*' hidden />
           <label for="song">
-            <img src={assets.upload_song} className='w-24 cursor-pointer' alt="" />
+            <img src={song?assets.upload_added : assets.upload_song} className='w-24 cursor-pointer' alt="" />
           </label>
         </div>
         <div className='flex flex-col gap-4'>
           <p>Upload Image</p>
-          <input type="file" id='image' accept='image/*' hidden />
+          <input onChange={(e) => setimage(e.target.files[0])} type="file" id='image' accept='image/*' hidden />
           <label for="image">
-            <img className='w-24 cursor-pointer' src={assets.upload_area} alt="" />
+            <img className='w-24 cursor-pointer' src={image?URL.createObjectURL(image) : assets.upload_area} alt="" />
           </label>
 
         </div>
       </div>
       <div className='flex flex-col gap-2.5'>
         <p>Song name</p>
-        <input className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]' placeholder='Type here' type="text" required />
+        <input onChange={(e) => setname(e.target.value)} value={name} className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]' placeholder='Type here' type="text" required />
       </div>
       <div className='flex flex-col gap-2.5'>
         <p>Song Description</p>
-        <input className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]' placeholder='Type here' type="text" required />
+        <input onChange={(e) => setdesc(e.target.value)} value={desc} className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[max(40vw,250px)]' placeholder='Type here' type="text" required />
       </div>
       <div className='flex flex-col gap-2.5'>
         <p>Album</p>
-        <select className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]'>
+        <select onChange={(e) => setalbum(e.target.value)} defaultValue={album} className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]'>
           <option value="none">None</option>
         </select>
       </div>
