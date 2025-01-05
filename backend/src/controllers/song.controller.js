@@ -35,21 +35,16 @@ const addSong = async (req, res) => {
         if (!uploadImage) {
             throw new Apierrors(400, "Image upload failed")
         }
-        const songData = {
+
+
+        const song = await Song.create({
             name,
             desc,
+            album,
             file: uploadAudio.secure_url,
             image: uploadImage.secure_url,
-            duration: `${Math.floor(uploadAudio.duration / 60)}:${Math.floor(uploadAudio.duration % 60).toString().padStart(2 , '0')}`,
-        }
-        if (album) {
-            songData.album = album
-        }
-        if(!album){
-            songData.album = "none"
-        }
-
-        const song = await Song.create(songData)
+            duration: `${Math.floor(uploadAudio.duration / 60)}:${Math.floor(uploadAudio.duration % 60).toString().padStart(2, '0')}`,
+        })
 
         if (!song) {
             throw new Apierrors(400, "Error while uploading song")

@@ -17,10 +17,6 @@ const albumSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    songs:[{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"Song"
-    }]
 },{timestamps:true})
 
 export const Album = mongoose.models.Album || mongoose.model("Album" , albumSchema)

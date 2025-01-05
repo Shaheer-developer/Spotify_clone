@@ -4,8 +4,10 @@ import { albumsData } from "../assets/frontend-assets/assets.js";
 import { songsData } from "../assets/frontend-assets/assets.js";
 import AlbumItem from './AlbumItem'
 import SongItem from "./SongItem.jsx";
+import { useContext } from "react";
 
 const DisplayHome = () => {
+    const {songsData , albumData} = useContext('PlayerContext')
     return (
         <>
             <Navbar />
@@ -13,7 +15,7 @@ const DisplayHome = () => {
                 <h1 className="my-5 font-bold text-2xl">Featured Charts</h1>
                 <div className="flex overflow-auto">
                     {albumsData.map((item, index) => (
-                        <AlbumItem key={index} name={item.name} desc={item.desc} id={item.id} image={item.image} />
+                        <AlbumItem key={index} name={item.name} desc={item.desc} id={item._id} image={item.image} />
                     ))}
                 </div>
 
@@ -22,7 +24,7 @@ const DisplayHome = () => {
                 <h1 className="my-5 font-bold text-2xl">Today's biggest hits</h1>
                 <div className="flex overflow-auto">
                     {songsData.map((item, index) => (
-                        <SongItem key={index} name={item.name} desc={item.desc} id={item.id} image={item.image} />
+                        <SongItem key={index} name={item.name} desc={item.desc} id={item._id} image={item.image} />
                     ))}
                 </div>
 
