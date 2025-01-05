@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { assets } from '../assets/admin-assets/assets'
 import axios from 'axios'
 import { API_ENDPOINTS } from '../config/api'
@@ -23,9 +23,10 @@ const Addsong = () => {
       formData.append("desc" , desc)
       formData.append('image' , image)
       formData.append("audio" , song)
-      formData.append('album' , albumData)
+      formData.append('album' , album)
 
       const response = await axios.post(API_ENDPOINTS.addsong , formData)
+      console.log(response)
 
       if(response.data.success){
         toast.success("Song added")
@@ -43,11 +44,30 @@ const Addsong = () => {
     }
 setloading(false)
   }
+
+const loadAlbumData = async() => {
+  try {
+    const response = await axios.get(API_ENDPOINTS.listalbum)
+    if(response.data.success){
+      setalbumData(response.data.data)
+    }
+    else{
+      toast.error("Enable to load Album data")
+    }
+  } catch (error) {
+    toast.error("Error Occurred")
+  }
+}
+
+useEffect(()=>{
+  loadAlbumData()
+},[])
+
+
   return loading ? (
     <div className='grid place-items-center min-h-[80vh]'>
       <div className='w-16 h-16 place-self-center border-4 border-gray-400 border-t-gray-800 rounded-full animate-spin'>
       </div>
-
     </div>
   ): (
     <form onSubmit={onSubmitHandler} className='flex flex-col items-start gap-8 text-gray-600'>
@@ -79,7 +99,8 @@ setloading(false)
       <div className='flex flex-col gap-2.5'>
         <p>Album</p>
         <select onChange={(e) => setalbum(e.target.value)} defaultValue={album} className='bg-transparent outline-green-600 border-2 border-gray-400 p-2.5 w-[150px]'>
-          <option value="none">None</option>
+       <option value="none">none</option>
+          {albumData.map((item , index)=>(<option key={index} value={item.name}>{item.name}</option>))}
         </select>
       </div>
 

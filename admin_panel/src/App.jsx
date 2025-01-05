@@ -3,10 +3,11 @@ import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { Routes, Route } from 'react-router-dom'
 import Addsong from "./pages/Addsong";
-import Addalbum from "./pages/addalbum";
+import Addalbum from "./pages/Addalbum";
 import Listsong from "./pages/Listsong";
 import Sidebar from "./components/Sidebar";
 import Navbar from "./components/Navbar";
+import Listalbum from "./pages/Listalbum";
 
 
 
@@ -24,7 +25,7 @@ const App = () => {
                         <Route path='/add-song' element={<Addsong />} />
                         <Route path="/add-album" element={<Addalbum />} />
                         <Route path="/list-song" element={<Listsong />} />
-                        <Route path="/list-album" element={<Addalbum />} />
+                        <Route path="/list-album" element={<Listalbum />} />
                     </Routes>
                 </div>
 

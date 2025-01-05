@@ -9,11 +9,11 @@ const addSong = async (req, res) => {
     try {
         const { name, desc, album } = req.body
 
-        if (!(name && desc && album)) {
+        if (!(name && desc)) {
             throw new Apierrors(400, "All fields are required")
         }
 
-        if ([name, desc, album].some((field) => field?.trim() === "")) {
+        if ([name, desc].some((field) => field?.trim() === "")) {
             throw new Apierrors(400, "No field should be empty")
         }
 
@@ -35,15 +35,21 @@ const addSong = async (req, res) => {
         if (!uploadImage) {
             throw new Apierrors(400, "Image upload failed")
         }
-
-        const song = await Song.create({
+        const songData = {
             name,
             desc,
-            album,
             file: uploadAudio.secure_url,
             image: uploadImage.secure_url,
-            duration: `${Math.floor(uploadAudio.duration/60)}:${Math.floor(uploadAudio.duration%60)}`,
-        })
+            duration: `${Math.floor(uploadAudio.duration / 60)}:${Math.floor(uploadAudio.duration % 60).toString().padStart(2 , '0')}`,
+        }
+        if (album) {
+            songData.album = album
+        }
+        if(!album){
+            songData.album = "none"
+        }
+
+        const song = await Song.create(songData)
 
         if (!song) {
             throw new Apierrors(400, "Error while uploading song")
@@ -54,40 +60,42 @@ const addSong = async (req, res) => {
         )
     }
     catch (error) {
-        throw new Apierrors(500 , "Song upload failed")
+        console.log(error)
+        throw new Apierrors(500, "Song upload failed")
     }
 }
 
 const listSongs = async (req, res) => {
- try {
-       const allsongs = await Song.find({})
-       if(!allsongs){
-           throw new Apierrors(404 , "Error while fetching songs")
-       }
-       return res.status(200).json(
-           new Apiresponse(200 , allsongs , "All songs fetched successfully")
-       )
- } catch (error) {
-    throw new Apierrors(500 , "Server error")
- }
+    try {
+        const allsongs = await Song.find({})
+        console.log(allsongs)
+        if (!allsongs) {
+            throw new Apierrors(404, "Error while fetching songs")
+        }
+        return res.status(200).json(
+            new Apiresponse(200, allsongs, "All songs fetched successfully")
+        )
+    } catch (error) {
+        throw new Apierrors(500, "Server error")
+    }
 }
 
 const removeSong = async (req, res) => {
-   try {
-      const { id } = req.body
-      if(!isValidObjectId(id)){
-        throw new Apierrors(400 , "Song Id is not valid")
-      }
-     const songremoved = await Song.findByIdAndDelete(id)
-     if(!songremoved){
-         throw new Apierrors(400 , "Error while removing song")
-     }
-     return res.status(200).json(
-         new Apiresponse(200 , {} , "Song removed successfully")
-     )
-   } 
-   catch (error) {
-    throw new Apierrors(500 , "Server error")
-   }
+    try {
+        const { id } = req.body
+        if (!isValidObjectId(id)) {
+            throw new Apierrors(400, "Song Id is not valid")
+        }
+        const songremoved = await Song.findByIdAndDelete(id)
+        if (!songremoved) {
+            throw new Apierrors(400, "Error while removing song")
+        }
+        return res.status(200).json(
+            new Apiresponse(200, {}, "Song removed successfully")
+        )
+    }
+    catch (error) {
+        throw new Apierrors(500, "Server error")
+    }
 }
-export { addSong, listSongs , removeSong}
+export { addSong, listSongs, removeSong }

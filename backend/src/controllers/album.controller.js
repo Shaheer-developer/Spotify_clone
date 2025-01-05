@@ -51,7 +51,7 @@ const allAlbums = async (req, res) => {
 
 
 const removeAlbum = async (req , res) => {
-    const { id } = req.body
+    const { id } = req.body;
     if(!isValidObjectId(id)){
         throw new Apierrors(400 , "Invalid album Id")
     }
